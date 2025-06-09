@@ -1,0 +1,13 @@
+# Dependency directories
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Env files
+.env
+
+# OS and editor junk
+.DS_Store
+.vscode/
