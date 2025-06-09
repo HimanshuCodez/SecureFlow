@@ -20,11 +20,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    verifyOtp: {
+    isAccountVerified: {
+        type: Boolean,
+        default: false
+    },
+    verifyOtpExpireAt: {
+        type: Number,
+        default: 0
+    },
+    resetOtp: {
         type: String,
         default: ''
     },
-    verifyOtpExpireAt: {
+    resetOtpExpireAt: {
         type: Number,
         default: 0
     },
@@ -33,3 +41,4 @@ const userSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+const userModel = mongoose.models.user || mongoose.model('user', userSchema);
