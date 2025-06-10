@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OTP Verification - SecureFlow</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f4f4; font-family: Arial, sans-serif;">
+  <table align="center" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4; padding: 40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background: linear-gradient(to right, #2563eb, #4f46e5); padding: 30px 20px;">
+              <h2 style="margin: 0; color: #ffffff; font-size: 26px;">SecureFlow OTP Verification</h2>
+              <p style="margin: 8px 0 0; color: #e0e7ff; font-size: 16px;">Verify your account securely</p>
+            </td>
+          </tr>
+
+          <!-- OTP Content -->
+          <tr>
+            <td style="padding: 30px; text-align: center;">
+              <p style="font-size: 18px; color: #333;">Hello <strong>{{name}}</strong>,</p>
+              <p style="font-size: 16px; color: #555; margin: 20px 0;">
+                Use the following OTP to verify your SecureFlow account. This OTP is valid for <strong>10 minutes</strong>.
+              </p>
+              <div style="font-size: 36px; letter-spacing: 8px; font-weight: bold; color: #2563eb; background-color: #f0f4ff; padding: 15px 30px; border-radius: 8px; display: inline-block; margin: 20px 0;">
+                {{otp}}
+              </div>
+              <p style="font-size: 14px; color: #888; margin-top: 25px;">
+                If you did not request this, please ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="background-color: #f9fafb; padding: 20px;">
+              <p style="font-size: 13px; color: #999;">© 2025 SecureFlow. All rights reserved.</p>
+              <p style="font-size: 13px; color: #999;">
+                Contact us: <a href="mailto:support@secureflow.example.com" style="color: #2563eb;">support@secureflow.example.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

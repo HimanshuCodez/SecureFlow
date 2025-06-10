@@ -28,7 +28,7 @@ export const register = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', 
+            secure: process.env.NODE_ENV === 'production',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict'
         });
@@ -42,7 +42,7 @@ export const register = async (req, res) => {
             from: `"SecureFlow Team" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: 'Welcome to SecureFlow',
-            html: personalizedEmail 
+            html: personalizedEmail
         };
         await transporter.sendMail(mailOptions);
         console.log('Welcome email sent successfully');
@@ -58,24 +58,24 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({success: false, message: 'Email and password are required' });
+        return res.status(400).json({ success: false, message: 'Email and password are required' });
     }
 
     try {
         const user = await userModel.findOne({ email });
         if (!user) {
-            return res.status(404).json({success: false, message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({success: false, message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', 
+            secure: process.env.NODE_ENV === 'production',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict'
         });
@@ -90,13 +90,80 @@ export const logout = async (req, res) => {
     try {
         res.clearCookie('token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', 
+            secure: process.env.NODE_ENV === 'production',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict'
         });
         res.status(200).json({ success: true, message: 'User logged out successfully' });
     } catch (error) {
         console.error('Error logging out:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+export const sendVerifyOtp = async (req, res) => {
+
+
+    try {
+        const { userId } = req.body
+        const user = await userModel.findById(userId);
+        if (user.isAccountVerified) {
+            return res.status(200).json({ success: false, message: 'Account already Verified' });
+        }
+
+        const otp = String(Math.floor(100000 + Math.random() * 900000))
+        user.verifyOtp = otp;
+        user.verifyOtpExpireAt = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
+        await user.save();
+
+        const otpTemplate = fs.readFileSync(path.join(__dirname, '../utility/otpTemplate.html'), 'utf-8');
+        let otpHTML = otpTemplate
+            .replace('{{name}}', user.name)
+            .replace('{{otp}}', otp);
+        const mailOptions = {
+            from: `"SecureFlow Team" <${process.env.EMAIL_USER}>`,
+            to: user.email,
+            subject: 'Account Verification OTP',
+            html: otpHTML
+        };
+        await transporter.sendMail(mailOptions);
+        console.log('otp email sent successfully');
+        res.status(200).json({ success: true, message: 'otp email sent successfully' });
+
+    } catch (error) {
+        console.error('Error sending verification email:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+export const verifyEmail = async (req, res) => {
+    const { userId, otp } = req.body;
+
+    if (!userId || !otp) {
+        return res.status(400).json({ success: false, message: 'User ID and OTP are required' });
+    }
+
+    try {
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        if (user.isAccountVerified) {
+            return res.status(200).json({ success: false, message: 'Account already verified' });
+        }
+
+        if (user.verifyOtp !== otp || Date.now() > user.verifyOtpExpireAt) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+        }
+
+        user.isAccountVerified = true;
+        user.verifyOtp = '';
+        user.verifyOtpExpireAt = 0;
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Account verified successfully' });
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
