@@ -50,17 +50,37 @@ export const login = async (req, res) => {
             return res.status(404).json({success:false, message: 'User not found' });
         }
 
-        const isMatch = await user.comparePassword(password);
+        const isMatch = await bcrypt.compare(password,user.password);
         if (!isMatch) {
             return res.status(401).json({success:false, message: 'Invalid credentials' });
         }
 
         // Generate token (assuming you have a method for this)
-        const token = user.generateAuthToken();
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', 
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite : process.env.NODE_ENV === 'production' ? 'None' : 'strict'
+        });
+        res.status(201).json({ success: true, message: 'User logged in successfully' });
 
         res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email } });
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export const logout = async (req, res) => {
+    try {
+        res.clearCookie('token', {httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', 
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite : process.env.NODE_ENV === 'production' ? 'None' : 'strict'});
+        res.status(200).json({ success: true, message: 'User logged out successfully' });
+    } catch (error) {
+        console.error('Error logging out:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }

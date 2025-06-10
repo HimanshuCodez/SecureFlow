@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import authRouter from './routes/authRoute.js';
 import mongoose from 'mongoose';
 import "dotenv/config"
 import cookieParser from 'cookie-parser';
@@ -14,7 +15,9 @@ app.use(cors({credentials: true}));
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
-}); 
+});     
+
+app.use('/api/auth',authRouter);
 
 mongoose.connect(process.env.MongodbURI, {
 }).then(() => {
