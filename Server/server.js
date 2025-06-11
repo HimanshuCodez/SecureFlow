@@ -4,6 +4,7 @@ import cors from 'cors';
 import authRouter from './routes/authRoute.js';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import userRouter from "./routes/userRoute.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 });     
 
 app.use('/api/auth',authRouter);
+app.use('/api/user',userRouter);
 
 mongoose.connect(process.env.MongodbURI, {
 }).then(() => {

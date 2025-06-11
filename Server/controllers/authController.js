@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -245,3 +246,4 @@ export const resetPassword = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
+
