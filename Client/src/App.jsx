@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Home from './pages/Home'
 import EmailVerify from './pages/EmailVerify'
 import NotFound from './pages/NotFound'
+import Register from './pages/Regsiter'
 const App = () => {
   return (
     <div>
@@ -13,7 +14,7 @@ const App = () => {
   <Route path="/login" element={<Login />} />
   <Route path="/reset-password" element={<ResetPassword />} />
   <Route path="/email-verify" element={<EmailVerify />} />
-  {/* <Route path="/register" element={<Register />} /> */}
+  <Route path="/register" element={<Register />} />
   <Route path="*" element={<NotFound />} />
 </Routes>
 
