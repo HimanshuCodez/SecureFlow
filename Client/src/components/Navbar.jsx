@@ -1,9 +1,30 @@
 import { Menu, User, LogIn, LogOut, ShieldCheck } from "lucide-react";
-import {  useState } from "react";
+import {  useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContent } from "../context/AppContext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // mock state
+  const { isLoggedIn,setIsLoggedIn,backendUrl,setUserData, userData } = useContext(AppContent);
+
+const logout =  async () => {
+  try {
+    axios.defaults.withCredentials = true;
+    const { data } = await axios.post(`${backendUrl}/api/auth/logout`);
+    if (data.success) {
+      setIsLoggedIn(false);
+      setUserData(false);
+      navigate("/");
+      toast.success("Logout successful!");
+    } else {
+      console.error("Logout failed:", data.message);
+      toast.error("Logout failed. Please try again.");
+    }
+  } catch (error) {
+    
+  }
+}
 const navigate = useNavigate();
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -23,12 +44,11 @@ const navigate = useNavigate();
             About
           </a>
 
-          {isLoggedIn ? (
+          {isLoggedIn && userData ? (
             <div className="flex items-center gap-3">
-              <User className="text-blue-600" />
-              <span className="text-gray-800">Himanshu</span>
+              <span className="text-white bg-black justify-center items-center flex relative group rounded-full w-8 h-8 ">{userData.name[0].toUpperCase()}</span>
               <button
-                onClick={() => setIsLoggedIn(false)}
+                onClick={logout}
                 className="text-red-500 hover:underline flex items-center gap-1"
               >
                 <LogOut size={18} />
@@ -39,7 +59,6 @@ const navigate = useNavigate();
             <div className="flex gap-3">
               <button
                 onClick={() => navigate('/login')}
-                href="/login"
                 className="text-blue-600 hover:underline flex items-center gap-1"
               >
                 <LogIn size={18} />
