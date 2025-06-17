@@ -1,27 +1,28 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, useRef, use } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { AppContent } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { MailCheck, Send, TimerReset } from "lucide-react";
+import { MailCheck, Send, TimerReset, Loader2 } from "lucide-react";
 
 export default function EmailVerify() {
-  const { backendUrl } = useContext(AppContent);
+  const { backendUrl,isLoggedIn,userData,getUserData } = useContext(AppContent);
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
-  const [otp, setOtp] = useState("");
-  const [timer, setTimer] = useState(600); // 10 minutes = 600 seconds
-  const [resendDisabled, setResendDisabled] = useState(true);
   const navigate = useNavigate();
 
-  // Format seconds into MM:SS
+  const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
+  const inputRefs = useRef([]);
+  const [timer, setTimer] = useState(600);
+  const [resendDisabled, setResendDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
 
-  // Countdown effect
   useEffect(() => {
     let interval = null;
     if (timer > 0) {
@@ -34,20 +35,25 @@ export default function EmailVerify() {
     return () => clearInterval(interval);
   }, [timer]);
 
-  // Send OTP when mounted
   useEffect(() => {
-    const sendVerificationOtp = async () => {
+    if (isLoggedIn && userData ) {
+      toast.error("You are already logged in. Redirecting to home page.");
+      navigate("/");
+    } 
+  }, [isLoggedIn,userData ]);
+  useEffect(() => {
+    const sendOtp = async () => {
       try {
         axios.defaults.withCredentials = true;
         const { data } = await axios.post(`${backendUrl}/api/auth/send-verify-otp`, {
           email,
         });
         if (data.success) {
-          toast.success("OTP sent to your email");
-          setTimer(600); // reset timer
+          toast.success("OTP sent to your email.");
+          setTimer(600);
           setResendDisabled(true);
         } else {
-          toast.error("Failed to send OTP");
+          toast.error("Failed to send OTP.");
         }
       } catch (error) {
         console.error("Send OTP error:", error);
@@ -55,20 +61,25 @@ export default function EmailVerify() {
       }
     };
 
-    if (email) sendVerificationOtp();
+    if (email) sendOtp();
     else toast.error("Email not found. Please try signing up again.");
   }, [email, backendUrl]);
 
   const handleVerify = async (e) => {
     e.preventDefault();
+    const otp = otpDigits.join("");
+    if (otp.length !== 6) return toast.error("Enter 6-digit OTP.");
+
+    setLoading(true);
     try {
-      const { data } = await axios.post(`${backendUrl}/api/auth/verify-otp`, {
-        email,
-        otp,
+      const { data } = await axios.post(`${backendUrl}/api/auth/verify-account`, {
+        
+        otp
       });
 
       if (data.success) {
         toast.success("Email verified successfully!");
+        getUserData()
         navigate("/login");
       } else {
         toast.error(data.message || "Verification failed");
@@ -76,6 +87,8 @@ export default function EmailVerify() {
     } catch (err) {
       console.error("OTP Verification Error:", err);
       toast.error(err?.response?.data?.message || "Invalid or expired OTP.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,38 +112,88 @@ export default function EmailVerify() {
     }
   };
 
+  const handleChange = (e, index) => {
+    const value = e.target.value;
+    if (!/^[0-9]?$/.test(value)) return;
+
+    const newDigits = [...otpDigits];
+    newDigits[index] = value;
+    setOtpDigits(newDigits);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
+      const newDigits = [...otpDigits];
+      newDigits[index - 1] = "";
+      setOtpDigits(newDigits);
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+const handlePaste = (e) => {
+  e.preventDefault();
+  const pastedValue = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+  if (!/^\d{1,6}$/.test(pastedValue)) return;
+
+  const newDigits = Array(6).fill("");
+  for (let i = 0; i < pastedValue.length; i++) {
+    newDigits[i] = pastedValue[i];
+  }
+
+  setOtpDigits(newDigits);
+
+  const nextIndex = newDigits.findIndex((d) => d === "");
+  inputRefs.current[nextIndex === -1 ? 5 : nextIndex]?.focus();
+};
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-600 to-blue-500 flex items-center justify-center px-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md animate-fade-in">
         <div className="flex justify-center mb-4">
           <MailCheck className="text-indigo-600" size={42} />
         </div>
+
         <h2 className="text-2xl font-bold text-center text-indigo-600 mb-3">
           Verify Your Email
         </h2>
-        <p className="text-center text-gray-600 text-sm mb-4">
-          We’ve sent a 6-digit OTP to <span className="font-medium">{email}</span>.
-          <br />
-          Please enter it below to verify your email address.
+
+        <p className="text-center text-gray-600 text-sm mb-6">
+          We’ve sent a 6-digit OTP to <span className="font-medium">{email}</span>.<br />
+          Enter it below to verify your email address.
         </p>
 
-        <form onSubmit={handleVerify} className="space-y-4">
-          <input
-            type="text"
-            maxLength={6}
-            placeholder="Enter OTP"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
+        <form onSubmit={handleVerify} className="space-y-6">
+          <div className="flex justify-between gap-2">
+            {otpDigits.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
+                type="text"
+                maxLength="1"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                className="w-10 h-12 text-center text-xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                value={digit}
+                onChange={(e) => handleChange(e, index)}
+                onPaste={handlePaste}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+              />
+            ))}
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-md transition flex items-center justify-center"
+            disabled={loading}
+            className={`w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-md transition ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            <Send className="mr-2" size={18} />
-            Verify Email
+            {loading ? <Loader2 className="animate-spin mr-2" size={18} /> : <Send className="mr-2" size={18} />}
+            {loading ? "Verifying..." : "Verify Email"}
           </button>
         </form>
 
