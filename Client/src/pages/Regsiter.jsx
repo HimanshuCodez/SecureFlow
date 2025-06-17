@@ -24,7 +24,17 @@ export default function Signup() {
         email,
         password,
       });
+ const otpRes = await axios.post(`${backendUrl}/api/auth/send-verify-otp`, {
+      email,
+    });
+     if (!otpRes.data.success) {
+      throw new Error(otpRes.data.message || "Failed to send OTP");
+    }
 
+    toast.success("Account created! OTP sent to your email.");
+
+    // Step 3: Redirect to email verification page with email as query
+    navigate(`/email-verify?email=${encodeURIComponent(email)}`);
       if (!data.success) {
         throw new Error(data.message || "Failed to create account");
       }
