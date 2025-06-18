@@ -6,7 +6,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 export default function Signup() {
   const { backendUrl, setIsLoggedIn } = useContext(AppContent);
-  console.log("Backend URL:", backendUrl);
   
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");

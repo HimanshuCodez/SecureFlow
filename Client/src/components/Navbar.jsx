@@ -43,6 +43,9 @@ const navigate = useNavigate();
           <a href="/about" className="text-gray-700 hover:text-blue-600 transition">
             About
           </a>
+          <a href="/about" className="text-gray-700 hover:text-blue-600 transition">
+            Get API
+          </a>
 
           {isLoggedIn && userData ? (
             <div className="flex items-center gap-3">

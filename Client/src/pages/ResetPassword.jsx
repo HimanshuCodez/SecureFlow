@@ -1,6 +1,17 @@
 import axios from "axios";
-import { Lock, Eye, EyeOff, Check, X, Shield, AlertTriangle } from "lucide-react";
+import {
+  Lock,
+  Eye,
+  EyeOff,
+  Check,
+  X,
+  Shield,
+  AlertTriangle,
+} from "lucide-react";
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AppContent } from "../context/AppContext";
+import { useContext } from "react";
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -10,15 +21,18 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const location = useLocation();
+  const { backendUrl, getUserData } = useContext(AppContent);
+  const navigate = useNavigate();
+  const { email, otp } = location.state || {};
   const [strengthDetails, setStrengthDetails] = useState({
     length: false,
     uppercase: false,
     lowercase: false,
     number: false,
-    special: false
+    special: false,
   });
 
-  // Password strength calculation
   useEffect(() => {
     const checkPasswordStrength = () => {
       const details = {
@@ -26,11 +40,11 @@ export default function ResetPassword() {
         uppercase: /[A-Z]/.test(newPassword),
         lowercase: /[a-z]/.test(newPassword),
         number: /\d/.test(newPassword),
-        special: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword)
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
       };
-      
+
       setStrengthDetails(details);
-      
+
       const score = Object.values(details).filter(Boolean).length;
       setPasswordStrength(score);
     };
@@ -44,7 +58,7 @@ export default function ResetPassword() {
         uppercase: false,
         lowercase: false,
         number: false,
-        special: false
+        special: false,
       });
     }
   }, [newPassword]);
@@ -64,9 +78,12 @@ export default function ResetPassword() {
   };
 
   const getStrengthIcon = () => {
-    if (passwordStrength <= 2) return <AlertTriangle className="w-4 h-4 text-red-500" />;
-    if (passwordStrength <= 3) return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-    if (passwordStrength <= 4) return <Shield className="w-4 h-4 text-blue-500" />;
+    if (passwordStrength <= 2)
+      return <AlertTriangle className="w-4 h-4 text-red-500" />;
+    if (passwordStrength <= 3)
+      return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+    if (passwordStrength <= 4)
+      return <Shield className="w-4 h-4 text-blue-500" />;
     return <Shield className="w-4 h-4 text-green-500" />;
   };
 
@@ -74,8 +91,6 @@ export default function ResetPassword() {
     setIsLoading(true);
     setError("");
     setSuccess("");
-
-    // Enhanced validation
     if (newPassword.length < 8) {
       setError("Password must be at least 8 characters long.");
       setIsLoading(false);
@@ -95,13 +110,19 @@ export default function ResetPassword() {
     }
 
     try {
-      const {data} = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/reset-password`,{email,otp, newPassword});
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        `${backendUrl}/api/auth/reset-password`,
+        { email, otp, newPassword }
+      );
 
-      
       console.log("Reset password to:", newPassword);
-      setSuccess("Password reset successful! You can now login with your new password.");
+      setSuccess(
+        "Password reset successful! You can now login with your new password."
+      );
       setNewPassword("");
       setConfirmPassword("");
+      navigate("/login");
     } catch (err) {
       setError("Failed to reset password. Please try again.");
     } finally {
@@ -158,16 +179,18 @@ export default function ResetPassword() {
               <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
                 <div className="flex items-center space-x-2">
                   {getStrengthIcon()}
-                  <span className="text-sm font-medium">Password Strength: {getStrengthText()}</span>
+                  <span className="text-sm font-medium">
+                    Password Strength: {getStrengthText()}
+                  </span>
                 </div>
-                
+
                 <div className="flex space-x-1">
                   {[...Array(5)].map((_, i) => (
                     <div
                       key={i}
                       className={`h-2 flex-1 rounded-full transition-all duration-500 ${
-                        i < passwordStrength 
-                          ? getStrengthColor() + " animate-pulse" 
+                        i < passwordStrength
+                          ? getStrengthColor() + " animate-pulse"
                           : "bg-gray-200"
                       }`}
                     ></div>
@@ -176,11 +199,11 @@ export default function ResetPassword() {
 
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   {[
-                    { key: 'length', label: '8+ characters' },
-                    { key: 'uppercase', label: 'Uppercase' },
-                    { key: 'lowercase', label: 'Lowercase' },
-                    { key: 'number', label: 'Number' },
-                    { key: 'special', label: 'Special char' }
+                    { key: "length", label: "8+ characters" },
+                    { key: "uppercase", label: "Uppercase" },
+                    { key: "lowercase", label: "Lowercase" },
+                    { key: "number", label: "Number" },
+                    { key: "special", label: "Special char" },
                   ].map(({ key, label }) => (
                     <div key={key} className="flex items-center space-x-1">
                       {strengthDetails[key] ? (
@@ -188,7 +211,13 @@ export default function ResetPassword() {
                       ) : (
                         <X className="w-3 h-3 text-gray-400" />
                       )}
-                      <span className={strengthDetails[key] ? 'text-green-600' : 'text-gray-500'}>
+                      <span
+                        className={
+                          strengthDetails[key]
+                            ? "text-green-600"
+                            : "text-gray-500"
+                        }
+                      >
                         {label}
                       </span>
                     </div>
@@ -229,7 +258,7 @@ export default function ResetPassword() {
               <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
-          
+
           {success && (
             <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-lg animate-in slide-in-from-top-2 duration-300">
               <Check className="w-5 h-5 text-green-500" />
@@ -244,8 +273,8 @@ export default function ResetPassword() {
             disabled={isLoading || passwordStrength < 3}
             className={`w-full relative overflow-hidden rounded-lg py-3 px-4 font-semibold text-white transition-all duration-300 transform ${
               isLoading || passwordStrength < 3
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:scale-105 shadow-lg hover:shadow-xl'
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:scale-105 shadow-lg hover:shadow-xl"
             }`}
           >
             <div className="flex items-center justify-center space-x-2">
@@ -261,7 +290,7 @@ export default function ResetPassword() {
                 </>
               )}
             </div>
-            
+
             {!isLoading && passwordStrength >= 3 && (
               <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
             )}
@@ -275,7 +304,8 @@ export default function ResetPassword() {
             <div>
               <p className="text-xs text-blue-700 font-medium">Security Tip</p>
               <p className="text-xs text-blue-600 mt-1">
-                Use a unique password that you haven't used elsewhere. Consider using a password manager.
+                Use a unique password that you haven't used elsewhere. Consider
+                using a password manager.
               </p>
             </div>
           </div>

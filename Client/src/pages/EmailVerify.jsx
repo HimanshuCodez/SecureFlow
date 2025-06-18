@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { MailCheck, Send, TimerReset, Loader2 } from "lucide-react";
 
 export default function EmailVerify() {
-  const { backendUrl,  getUserData } =
+  const { backendUrl,  getUserData,isLoggedIn,userData } =
     useContext(AppContent);
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");

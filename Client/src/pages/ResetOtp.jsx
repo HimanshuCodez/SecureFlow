@@ -1,12 +1,12 @@
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AppContent } from "../context/AppContext";
+
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ShieldCheck, Loader2, Send } from "lucide-react";
 
 export default function ResetOtp() {
-  const { backendUrl } = useContext(AppContent);
+  axios.defaults.withCredentials = true;
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email || "";
@@ -48,14 +48,13 @@ export default function ResetOtp() {
   };
 
   const handleVerify = (e) => {
-  e.preventDefault();
-  const otp = otpDigits.join("");
-  if (otp.length !== 6) return toast.error("Enter 6-digit OTP.");
+    e.preventDefault();
+    const otp = otpDigits.join("");
+    if (otp.length !== 6) return toast.error("Enter 6-digit OTP.");
 
-
-  navigate("", { state: { email, otp } });
-};
-
+ 
+    navigate("/reset-password", { state: { email, otp } });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-600 to-blue-500 flex items-center justify-center px-4">
@@ -97,7 +96,7 @@ export default function ResetOtp() {
             }`}
           >
             {loading ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2" />}
-            {loading ? "Verifying..." : "Verify OTP"}
+            {loading ? "Submiting..." : "Submit"}
           </button>
         </form>
       </div>
