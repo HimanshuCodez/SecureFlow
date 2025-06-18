@@ -99,7 +99,7 @@ const TestimonialsSlider = () => {
   const goToSlide = (index) => {
     setCurrentIndex(index);
     setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000); // Resume auto-play after 10s
+    setTimeout(() => setIsAutoPlaying(true), 10000); 
   };
 
   const nextSlide = () => {
@@ -117,28 +117,30 @@ const TestimonialsSlider = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-indigo-600 to-blue-500 overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-white/5 rounde
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full opacity-20 blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500 rounded-full opacity-20 blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-3/4 left-1/2 w-64 h-64 bg-purple-500 rounded-full opacity-15 blur-2xl animate-bounce"></div>
+      </div>
 
       <div className="relative z-10 flex items-center justify-center min-h-screen py-16 px-4">
         <div className="w-full max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
-              Client <span className="text-yellow-300">Success</span> Stories
+            <h2 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent mb-6 drop-shadow-2xl">
+              Client Success Stories
             </h2>
-            <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Discover how SecureFlow has transformed businesses worldwide with cutting-edge security solutions
             </p>
-            <div className="mt-8 w-24 h-1 bg-yellow-300 mx-auto rounded-full shadow-lg shadow-yellow-300/50"></div>
+            <div className="mt-8 w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full shadow-lg shadow-blue-500/50"></div>
           </div>
 
           {/* Main Testimonials Slider */}
           <div className="relative mb-16">
-            <div className="overflow-hidden rounded-3xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-2xl">
+            <div className="overflow-hidden rounded-3xl bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl">
               <div 
                 className="flex transition-transform duration-700 ease-in-out"
                 style={{ transform: `translateX(-${currentIndex * (100 / 3)}%)` }}
@@ -210,12 +212,12 @@ const TestimonialsSlider = () => {
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="text-center p-8 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/30 transition-all duration-300 hover:scale-105 hover:shadow-xl group"
+                className="text-center p-8 rounded-2xl bg-black/20 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-xl group"
               >
-                <div className="text-5xl font-bold text-white mb-3 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300">
                   {stat.value}
                 </div>
-                <div className="text-white/70 text-lg">{stat.label}</div>
+                <div className="text-gray-300 text-lg">{stat.label}</div>
               </div>
             ))}
           </div>

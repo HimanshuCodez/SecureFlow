@@ -21,7 +21,7 @@ export const AppContextProvider = (props) => {
       }
     } catch (error) {
       console.error("Error fetching auth status:", error);
-      toast.error("Failed to fetch authentication status. Please try again.");
+     
     }
   };
   const getUserData = async () => {
@@ -33,7 +33,7 @@ export const AppContextProvider = (props) => {
       toast.success("User data fetched successfully!");
     } catch (error) {
       console.error("Error fetching user data:", error);
-      toast.error("Failed to fetch user data. Please try again.");
+      toast.error("Failed to fetch user data. Please Login again.");
     }
   };
 
