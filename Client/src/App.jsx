@@ -10,6 +10,7 @@ import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ForgotPassword from './pages/ForgetPassowrd'
 import ResetOtp from './pages/ResetOtp'
+import SecureFlowChatbot from './pages/ChatBot'
 const App = () => {
   return (
     <div>
@@ -24,6 +25,7 @@ const App = () => {
   <Route path="/reset-password" element={<ResetPassword />} />
   <Route path="*" element={<NotFound />} />
 </Routes>
+      <SecureFlowChatbot />
 
 
     </div>
