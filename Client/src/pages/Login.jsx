@@ -35,7 +35,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center px-4">
+    
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 flex items-center justify-center px-4 relative overflow-hidden">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-indigo-600 mb-6">
           Welcome Back
@@ -97,7 +98,7 @@ export default function Login() {
             </span>
           </p>
           <p
-            onClick={() => navigate("/reset-password")}
+            onClick={() => navigate("/forget-password")}
             className="text-indigo-600 cursor-pointer hover:underline"
           >
             Forgot your password?

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { MailCheck, Send, TimerReset, Loader2 } from "lucide-react";
 
 export default function EmailVerify() {
-  const { backendUrl, isLoggedIn, userData, getUserData } =
+  const { backendUrl,  getUserData } =
     useContext(AppContent);
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
@@ -37,13 +37,13 @@ export default function EmailVerify() {
     }
     return () => clearInterval(interval);
   }, [timer]);
-
-  // useEffect(() => {
-  //   if (isLoggedIn && userData) {
-  //     toast.error("You are already logged in. Redirecting to home page.");
-  //     navigate("/");
-  //   }
-  // }, [isLoggedIn, userData]);
+//to prevent user from accessing this page if already logged in
+  useEffect(() => {
+    if (isLoggedIn && userData) {
+      toast.error("You are already logged in. Redirecting to home page.");
+      navigate("/");
+    }
+  }, [isLoggedIn, userData]);
   useEffect(() => {
     const sendOtp = async () => {
       try {
@@ -190,7 +190,7 @@ export default function EmailVerify() {
                 maxLength="1"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                className="w-10 h-12 text-center text-xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-10 h-12 text-center text-xl border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={digit}
                 onChange={(e) => handleChange(e, index)}
                 onPaste={handlePaste}

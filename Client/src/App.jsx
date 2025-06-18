@@ -8,16 +8,20 @@ import NotFound from './pages/NotFound'
 import Register from './pages/Regsiter'
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ForgotPassword from './pages/ForgetPassowrd'
+import ResetOtp from './pages/ResetOtp'
 const App = () => {
   return (
     <div>
       <ToastContainer/>
 <Routes>
   <Route path="/" element={<Home />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/reset-password" element={<ResetPassword />} />
-  <Route path="/email-verify" element={<EmailVerify />} />
   <Route path="/register" element={<Register />} />
+  <Route path="/login" element={<Login />} />
+  <Route path="/email-verify" element={<EmailVerify />} />
+  <Route path="/forget-password" element={<ForgotPassword />} />
+  <Route path="/reset-otp" element={<ResetOtp/>} />
+  <Route path="/reset-password" element={<ResetPassword />} />
   <Route path="*" element={<NotFound />} />
 </Routes>
 
