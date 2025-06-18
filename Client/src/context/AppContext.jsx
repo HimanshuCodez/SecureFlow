@@ -30,7 +30,7 @@ export const AppContextProvider = (props) => {
         withCredentials: true,
       });
       setUserData(data.userData);
-      toast.success("User data fetched successfully!");
+
     } catch (error) {
       console.error("Error fetching user data:", error);
       toast.error("Failed to fetch user data. Please Login again.");

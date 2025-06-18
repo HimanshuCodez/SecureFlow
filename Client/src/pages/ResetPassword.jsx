@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppContent } from "../context/AppContext";
 import { useContext } from "react";
+import { toast } from "react-toastify";
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -116,8 +117,8 @@ export default function ResetPassword() {
         { email, otp, newPassword }
       );
 
-      console.log("Reset password to:", newPassword);
-      setSuccess(
+     
+      toast.success(
         "Password reset successful! You can now login with your new password."
       );
       setNewPassword("");

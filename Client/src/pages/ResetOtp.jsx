@@ -4,8 +4,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ShieldCheck, Loader2, Send } from "lucide-react";
+import { AppContent } from "../context/AppContext";
 
 export default function ResetOtp() {
+    const { backendUrl} = useContext(AppContent);
   axios.defaults.withCredentials = true;
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,7 +41,10 @@ export default function ResetOtp() {
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const value = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    const value = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
     const arr = Array.from(value).concat(Array(6).fill("")).slice(0, 6);
     setOtpDigits(arr);
 
@@ -47,13 +52,21 @@ export default function ResetOtp() {
     inputRefs.current[next === -1 ? 5 : next]?.focus();
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
     const otp = otpDigits.join("");
     if (otp.length !== 6) return toast.error("Enter 6-digit OTP.");
-
- 
-    navigate("/reset-password", { state: { email, otp } });
+    const { data } = await axios.post(
+      `${backendUrl}/api/auth/verify-reset-otp`,
+      {
+        email,
+        otp,
+      }
+    );
+    if (data.success) {
+      toast.success("OTP Verified successfully You can now Create your new password");
+      navigate("/reset-password", { state: { email, otp } });
+    }
   };
 
   return (
@@ -67,7 +80,8 @@ export default function ResetOtp() {
           Enter Reset OTP
         </h2>
         <p className="text-center text-gray-600 text-sm mb-6">
-          We’ve sent a 6-digit OTP to <span className="font-medium">{email}</span>.
+          We’ve sent a 6-digit OTP to{" "}
+          <span className="font-medium">{email}</span>.
         </p>
 
         <form onSubmit={handleVerify} className="space-y-5">
@@ -95,7 +109,11 @@ export default function ResetOtp() {
               loading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
-            {loading ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2" />}
+            {loading ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : (
+              <Send className="mr-2" />
+            )}
             {loading ? "Submiting..." : "Submit"}
           </button>
         </form>

@@ -249,3 +249,27 @@ export const resetPassword = async (req, res) => {
     }
 }
 
+
+export const verifyResetOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ success: false, message: 'Email and OTP are required' });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.resetOtp !== otp || Date.now() > user.resetOtpExpireAt) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    res.status(200).json({ success: true, message: 'OTP verified successfully' });
+  } catch (error) {
+    console.error("Error verifying reset OTP:", error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
