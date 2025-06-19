@@ -11,8 +11,10 @@ export default function SocialAuthSuccess() {
   useEffect(() => {
  const verifyUser = async () => {
   try {
-    axios.defaults.withCredentials = true; 
-    const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`);
+ 
+    const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`,{
+        withCredentials: true, 
+    });
 
     if (data.success) {
       setIsLoggedIn(true);
