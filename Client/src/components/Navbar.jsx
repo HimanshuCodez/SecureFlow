@@ -45,12 +45,12 @@ export default function Navbar() {
           >
             About
           </Link>
-          <a
+          <Link
             href="/about"
             className="text-gray-700 hover:text-blue-600 transition"
           >
             Get API
-          </a>
+          </Link>
 
           {isLoggedIn && userData ? (
             <div className="flex items-center gap-3">
