@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 6000;
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://your-production-domain.com',
+    'https://secureflow.vercel.app',
 ];
 app.use(express.json());
 app.use(cookieParser());
