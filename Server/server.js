@@ -5,7 +5,9 @@ import authRouter from './routes/authRoute.js';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import userRouter from "./routes/userRoute.js";
-
+import passport from "passport";
+import session from "express-session";
+import './utility/passport.js';
 const app = express();
 
 const PORT = process.env.PORT || 6000;
@@ -18,6 +20,22 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({origin:allowedOrigins, credentials: true}));    
+
+
+app.use(
+  session({
+    secret: 'secureflowauth',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+    }
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.get('/', (req, res) => {

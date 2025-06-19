@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+       required: false,
     },
     verifyOtp: {
         type: String,
@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+     googleId: { type: String },
     createdAt: {
         type: Date,
         default: Date.now
