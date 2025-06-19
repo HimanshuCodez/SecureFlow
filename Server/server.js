@@ -12,12 +12,12 @@ const PORT = process.env.PORT || 6000;
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://secureflow.vercel.app',
+    'https://secure-flow-auth.vercel.app',
 ];
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ credentials: true,origin:allowedOrigins}));    
+app.use(cors({origin:allowedOrigins, credentials: true}));    
 
 
 app.get('/', (req, res) => {
