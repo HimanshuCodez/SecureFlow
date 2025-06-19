@@ -105,7 +105,15 @@ export default function Signup() {
             Sign Up
           </button>
         </form>
-
+  <button
+          onClick={() => {
+            window.location.href =
+              "https://secureflow.onrender.com/api/auth/google";
+          }}
+          className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded-md transition"
+        >
+          Continue with Google
+        </button>
         {/* Links */}
         <div className="mt-4 text-center text-sm text-gray-600 space-y-1">
           <p>
