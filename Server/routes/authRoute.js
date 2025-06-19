@@ -1,7 +1,7 @@
 import express from 'express';
 import { isAuthenticated, login, logout, register, resetPassword, sendResetOtp, sendVerifyOtp, verifyEmail, verifyResetOtp } from '../controllers/authController.js';
 import userAuth from '../middleware/userAuth.js';
-
+import jwt from 'jsonwebtoken';
 import passport from 'passport';
 const authRouter = express.Router();
 authRouter.post('/register', register);
