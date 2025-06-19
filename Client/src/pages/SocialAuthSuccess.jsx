@@ -5,30 +5,28 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 export default function SocialAuthSuccess() {
-  const { setIsLoggedIn, getUserData } = useContext(AppContent);
+  const { setIsLoggedIn, getUserData,backendUrl } = useContext(AppContent);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        axios.defaults.withCredentials = true;
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/auth/is-auth`
-        );
+ const verifyUser = async () => {
+  try {
+    axios.defaults.withCredentials = true; 
+    const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`);
 
-        if (data.success) {
-          setIsLoggedIn(true);
-          getUserData();
-          toast.success("Login successful!");
-          navigate("/");
-        } else {
-          throw new Error(data.message || "Authentication failed.");
-        }
-      } catch (error) {
-        toast.error("Something went wrong. Please login again.");
-        navigate("/login");
-      }
-    };
+    if (data.success) {
+      setIsLoggedIn(true);
+      getUserData();
+      toast.success("Login successful!");
+      navigate("/");
+    } else {
+      throw new Error(data.message || "Authentication failed.");
+    }
+  } catch (error) {
+    toast.error("Something went wrong. Please login again.");
+    navigate("/login");
+  }
+};
 
     verifyUser();
   }, [setIsLoggedIn, getUserData, navigate]);
