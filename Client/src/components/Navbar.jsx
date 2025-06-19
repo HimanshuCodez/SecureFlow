@@ -1,4 +1,4 @@
-import { Menu, User, LogIn, LogOut, ShieldCheck } from "lucide-react";
+import { Menu, X, User, LogIn, LogOut, ShieldCheck } from "lucide-react";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppContent } from "../context/AppContext";
@@ -8,6 +8,8 @@ import axios from "axios";
 export default function Navbar() {
   const { isLoggedIn, setIsLoggedIn, backendUrl, setUserData, userData } =
     useContext(AppContent);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   const logout = async () => {
     try {
@@ -19,12 +21,13 @@ export default function Navbar() {
         navigate("/");
         toast.success("Logout successful!");
       } else {
-        console.error("Logout failed:", data.message);
         toast.error("Logout failed. Please try again.");
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Logout failed.");
+    }
   };
-  const navigate = useNavigate();
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -36,25 +39,19 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex gap-6 items-center">
-          <Link href="/" className="text-gray-700 hover:text-blue-600 transition">
+          <Link to="/" className="text-gray-700 hover:text-blue-600 transition">
             Home
           </Link>
-          <Link
-            href="/about"
-            className="text-gray-700 hover:text-blue-600 transition"
-          >
+          <Link to="/about" className="text-gray-700 hover:text-blue-600 transition">
             About
           </Link>
-          <Link
-            href="/about"
-            className="text-gray-700 hover:text-blue-600 transition"
-          >
+          <Link to="/get-api" className="text-gray-700 hover:text-blue-600 transition">
             Get API
           </Link>
 
           {isLoggedIn && userData ? (
             <div className="flex items-center gap-3">
-              <span className="text-white bg-black justify-center items-center flex relative group rounded-full w-8 h-8 ">
+              <span className="text-white bg-black justify-center items-center flex relative group rounded-full w-8 h-8">
                 {userData.name[0].toUpperCase()}
               </span>
               <button
@@ -74,7 +71,6 @@ export default function Navbar() {
                 <LogIn size={18} />
                 Login
               </button>
-             
               <Link
                 to="/register"
                 className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 flex items-center gap-1"
@@ -86,11 +82,67 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Icon */}
+        {/* Mobile Menu Toggle */}
         <div className="md:hidden">
-          <Menu size={24} className="text-gray-800" />
+          <button onClick={() => setMobileOpen(!mobileOpen)}>
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileOpen && (
+        <div className="md:hidden px-4 pb-4 space-y-4">
+          <Link to="/" className="block text-gray-700 hover:text-blue-600">
+            Home
+          </Link>
+          <Link to="/about" className="block text-gray-700 hover:text-blue-600">
+            About
+          </Link>
+          <Link to="/get-api" className="block text-gray-700 hover:text-blue-600">
+            Get API
+          </Link>
+
+          {isLoggedIn && userData ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-white bg-black rounded-full w-8 h-8 flex justify-center items-center">
+                  {userData.name[0].toUpperCase()}
+                </span>
+                <span className="text-gray-800 font-medium">{userData.name}</span>
+              </div>
+              <button
+                onClick={logout}
+                className="text-red-500 hover:underline flex items-center gap-1"
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => {
+                  navigate("/login");
+                  setMobileOpen(false);
+                }}
+                className="text-blue-600 hover:underline flex items-center gap-1"
+              >
+                <LogIn size={18} />
+                Login
+              </button>
+              <Link
+                to="/register"
+                onClick={() => setMobileOpen(false)}
+                className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 flex items-center gap-1"
+              >
+                <User size={18} />
+                Register
+              </Link>
+            </>
+          )}
+        </div>
+      )}
     </nav>
   );
 }
