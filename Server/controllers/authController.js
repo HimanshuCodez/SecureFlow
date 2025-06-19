@@ -31,7 +31,7 @@ export const register = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict'
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
         });
 
         // Load and personalize welcome email template
@@ -78,7 +78,7 @@ export const login = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict'
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Important
         });
         res.status(200).json({ success: true, message: 'User logged in successfully', user: { id: user._id, name: user.name, email: user.email } });
     } catch (error) {
