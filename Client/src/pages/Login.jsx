@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const { backendUrl, setIsLoggedIn ,getUserData} = useContext(AppContent);
+  const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContent);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,6 @@ export default function Login() {
   };
 
   return (
-    
     <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 flex items-center justify-center px-4 relative overflow-hidden">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-indigo-600 mb-6">
@@ -85,14 +84,15 @@ export default function Login() {
             Login
           </button>
         </form>
-<button
-  onClick={() => {
-    window.location.href = 'https://secureflow.onrender.com/api/auth/google';
-  }}
-  className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded-md transition"
->
-  Continue with Google
-</button>
+        <button
+          onClick={() => {
+            window.location.href =
+              "https://secureflow.onrender.com/api/auth/google";
+          }}
+          className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded-md transition"
+        >
+          Continue with Google
+        </button>
 
         {/* Links */}
         <div className="mt-4 text-center text-sm text-gray-600 space-y-1">
@@ -116,7 +116,3 @@ export default function Login() {
     </div>
   );
 }
-
-
-
-
